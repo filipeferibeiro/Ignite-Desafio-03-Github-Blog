@@ -1,10 +1,13 @@
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-export const PublicationCardContainer = styled.div`
+export const PublicationCardContainer = styled(NavLink)`
   background: ${(props) => props.theme['base-post']};
   padding: 2rem;
   border-radius: 10px;
   border: 2px solid transparent;
+  text-decoration: none;
+  color: ${(props) => props.theme['base-title']};
 
   display: flex;
   flex-direction: column;

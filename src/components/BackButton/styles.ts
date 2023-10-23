@@ -1,6 +1,7 @@
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-export const ExternalLinkContainer = styled.a`
+export const BackButtonContainer = styled(NavLink)`
   display: flex;
   align-items: center;
   gap: 0.5rem;
