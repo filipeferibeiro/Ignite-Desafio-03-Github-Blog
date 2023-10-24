@@ -21,3 +21,13 @@ export const DetailContainer = styled.div`
     margin-top: 1rem;
   }
 `
+
+export const InfoContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  color: ${(props) => props.theme['base-text']};
+`
