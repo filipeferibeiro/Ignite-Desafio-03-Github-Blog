@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { ProfileInfo } from '../../components/ProfileInfo'
 import { PublicationCard } from './components/PublicationCard'
 import { SearchForm } from './components/SearchForm'
-import { PublicationsList } from './styles'
+import { HomeInfoContainer, PublicationsList } from './styles'
 import { useCallApi } from '../../hooks/useCallApi'
 import { Info } from '../../components/Info'
 
@@ -40,32 +40,35 @@ export function Home() {
     setQuery(query)
   }
 
-  if (error) {
-    return <Info home message="Ocorreu um erro ao buscar os dados." />
-  }
-
-  if (isLoading || !publications) {
-    return <Info home message="Carregando..." />
-  }
-
   return (
     <>
       <ProfileInfo />
       <SearchForm
-        publicationsAmount={publications.total_count}
+        publicationsAmount={publications?.total_count || 0}
         searchPublications={handleSetQuery}
       />
-      <PublicationsList>
-        {publications.items?.map((item) => (
-          <PublicationCard
-            key={item.id}
-            id={item.number}
-            title={item.title}
-            date={item.created_at}
-            description={item.body}
-          />
-        ))}
-      </PublicationsList>
+      {error && (
+        <HomeInfoContainer>
+          <Info home message="Ocorreu um erro ao buscar os dados." />
+        </HomeInfoContainer>
+      )}
+      {isLoading ? (
+        <HomeInfoContainer>
+          <Info home message="Carregando..." />
+        </HomeInfoContainer>
+      ) : (
+        <PublicationsList>
+          {publications?.items?.map((item) => (
+            <PublicationCard
+              key={item.id}
+              id={item.number}
+              title={item.title}
+              date={item.created_at}
+              description={item.body}
+            />
+          ))}
+        </PublicationsList>
+      )}
     </>
   )
 }
