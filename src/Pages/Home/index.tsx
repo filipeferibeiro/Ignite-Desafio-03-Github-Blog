@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ProfileInfo } from '../../components/ProfileInfo'
 import { PublicationCard } from './components/PublicationCard'
 import { SearchForm } from './components/SearchForm'
 import { PublicationsList } from './styles'
-import { api } from '../../lib/api'
+import { useCallApi } from '../../hooks/useCallApi'
+import { Info } from '../../components/Info'
 
 export interface Publication {
   body: null | string
@@ -19,30 +20,40 @@ export interface Publications {
 }
 
 export function Home() {
-  const [publications, setPublications] = useState<Publications>(
-    {} as Publications,
-  )
+  const [query, setQuery] = useState<string>('')
 
-  async function getGithubPublications(query?: string) {
-    const response = await api.get('search/issues', {
+  const params = useMemo(() => {
+    return {
       params: {
         q: `${query || ''} repo:filipeferibeiro/Ignite-Desafio-03-Github-Blog`,
       },
-    })
+    }
+  }, [query])
 
-    setPublications(response.data)
+  const {
+    data: publications,
+    isLoading,
+    error,
+  } = useCallApi<Publications>('search/issues', params)
+
+  function handleSetQuery(query: string) {
+    setQuery(query)
   }
 
-  useEffect(() => {
-    getGithubPublications()
-  }, [])
+  if (error) {
+    return <Info home message="Ocorreu um erro ao buscar os dados." />
+  }
+
+  if (isLoading || !publications) {
+    return <Info home message="Carregando..." />
+  }
 
   return (
     <>
       <ProfileInfo />
       <SearchForm
         publicationsAmount={publications.total_count}
-        searchPublications={getGithubPublications}
+        searchPublications={handleSetQuery}
       />
       <PublicationsList>
         {publications.items?.map((item) => (

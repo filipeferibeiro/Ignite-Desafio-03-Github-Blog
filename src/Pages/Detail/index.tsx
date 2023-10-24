@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
 import { PostInfo, PostInfoProps } from '../../components/PostInfo'
 import { DetailContainer } from './styles'
-import { api } from '../../lib/api'
 import { useParams } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { CodeBlock } from './components/CodeBlock'
-import { Info } from './components/Info'
+import { Info } from '../../components/Info'
+import { useCallApi } from '../../hooks/useCallApi'
 
 interface User {
   login: string
@@ -22,32 +21,14 @@ interface Publication {
 }
 
 export function Detail() {
-  const [publication, setPublication] = useState<Publication | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const { id } = useParams<{ id: string }>()
-
-  const getGithubPublication = useCallback(async () => {
-    setIsLoading(true)
-
-    try {
-      const response = await api.get(
-        `repos/filipeferibeiro/Ignite-Desafio-03-Github-Blog/issues/${id}`,
-      )
-
-      setPublication(response.data)
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message)
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }, [id])
-
-  useEffect(() => {
-    getGithubPublication()
-  }, [getGithubPublication])
+  const {
+    data: publication,
+    isLoading,
+    error,
+  } = useCallApi<Publication>(
+    `repos/filipeferibeiro/Ignite-Desafio-03-Github-Blog/issues/${id}`,
+  )
 
   if (error) {
     return <Info message="Ocorreu um erro ao buscar os dados." />

@@ -12,7 +12,7 @@ type SearchFormInputs = z.infer<typeof searchFormSchema>
 
 interface SearchFormProps {
   publicationsAmount: number
-  searchPublications: (query: string) => Promise<void>
+  searchPublications: (query: string) => void
 }
 
 export function SearchForm({
@@ -23,8 +23,8 @@ export function SearchForm({
     resolver: zodResolver(searchFormSchema),
   })
 
-  async function handleSearchPublications(data: SearchFormInputs) {
-    await searchPublications(data.query)
+  function handleSearchPublications(data: SearchFormInputs) {
+    searchPublications(data.query)
   }
 
   return (
